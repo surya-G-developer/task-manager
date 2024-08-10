@@ -61,13 +61,15 @@ export const authOptions = {
         user: {
           ...session.user,
           id: token.id,
-          randomKey: token.randomKey
+          role:token.role
         }
       }
     },
     jwt: ({ token, user }) => {
       console.log('JWT Callback', { token, user })
+      console.log('JWT Callback', { token, user })
       if (user) {
+        token.role = user.role; 
         const u = user 
         return {
           ...token,
