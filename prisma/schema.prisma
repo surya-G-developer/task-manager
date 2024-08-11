@@ -18,8 +18,9 @@ model User {
 model Tasks {
   id              Int       @id @unique @default(autoincrement())
   comments        Json?
-  title          String?
-  desc           String?
+  tsk_comments    String?
+  title           String?
+  desc            String?
   estimation_time String?
   assign_to       Int 
   assign_name     String

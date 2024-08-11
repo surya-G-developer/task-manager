@@ -9,23 +9,23 @@ import { MdDelete } from "react-icons/md";
 import { useRouter } from 'next/navigation';
 import { toast } from 'react-toastify';
 import Title from '../Title/Title';
-import TaskAddEditModal from '../TaskAddEditModal/TaskAddEditModal';
+import TaskUserUptModal from '../TaskUserUptModal/TaskUserUptModal';
 import { FaEdit } from "react-icons/fa";
-import { MdModeEdit } from "react-icons/md";
+import { VscDebugStart } from "react-icons/vsc";
+import { MdDone } from "react-icons/md";
+import { FaComment } from "react-icons/fa";
 
-export default function TaskListAdmin() {
+export default function TaskListUser({ user }) {
     const [data, setData] = useState([]);
     const [selectedData, setSelectedData] = useState({})
-    const [modTitle, setModTitle] = useState('Add Task')
     const router = useRouter();
 
-
     const fetchData = async () => {
-        const resp = await apiRequest('api/task', 'GET');
+        const resp = await apiRequest(`api/users/task?id=${user.id}`, 'GET');
+        //console.log(resp.status, '1')
         if (resp.status == 'success') {
             console.log(resp, 'inside success')
             setData(resp.data.data)
-            setSelectedData({})
         }
     };
 
@@ -34,10 +34,13 @@ export default function TaskListAdmin() {
     }, []);
 
 
-    const deleteTask = async (id) => {
-        const confirmed = confirm("Are you sure ?");
+    const completeTask = async (id) => {
+        const confirmed = confirm("Do you want to complete the task ?");
         if (confirmed) {
-            const resp = await apiRequest(`api/task?id=${id}`, 'DELETE');
+            let body = {
+                id: id
+            }
+            const resp = await apiRequest(`api/users/task`, 'PUT', body);
             if (resp.status == 'success') {
                 toast.success(resp.data.msg, {
                     hideProgressBar: false,
@@ -49,13 +52,11 @@ export default function TaskListAdmin() {
         }
     };
     const onClickTrigger = () => {
-        setModTitle('Add Task')
-        document.getElementById('modal_add_edit').showModal()
+        document.getElementById('modal_add_edit_user').showModal()
     }
     const onClickEdit = (data) => {
-        setModTitle('Edit Task')
         setSelectedData(data)
-        document.getElementById('modal_add_edit').showModal()
+        document.getElementById('modal_add_edit_user').showModal()
     }
     const emptySelectedData = (data) => {
         setSelectedData({})
@@ -64,8 +65,9 @@ export default function TaskListAdmin() {
     return (
         <>
             <Title
-                title="Task List"
+                title="User Tasks"
                 buttonText="Add Task"
+                showButton={false}
                 onClick={onClickTrigger}
             />
             <div className="overflow-x-auto">
@@ -75,8 +77,8 @@ export default function TaskListAdmin() {
                             <th>ID</th>
                             <th>Title</th>
                             <th>Description</th>
-                            <th>Estimate</th>
                             <th>Assign To</th>
+                            <th>Estimate</th>
                             <th>Status</th>
                             <th>Actions</th>
                         </tr>
@@ -87,21 +89,33 @@ export default function TaskListAdmin() {
                                 <td>{ind + 1}</td>
                                 <td>{val.title}</td>
                                 <td>{val.desc}</td>
-                                <td>{val.estimation_time ? val.estimation_time + ' hours' : '---'}</td>
                                 <td>{val.assign_name}</td>
+                                <td>{val.estimation_time ? val.estimation_time + ' hours' : '---'}</td>
                                 <td><div className={`badge  text-white ${val.status == 'open' ? 'badge-error' : val.status == 'closed' ? 'badge-success' : 'badge-warning'}`}>{val.status}</div></td>
                                 <th>
-                                    <div className='flex gap-1 items-center'>
-                                        <button className="btn btn-primary btn-sm text-white" onClick={() => { onClickEdit(val) }}><MdModeEdit size={18} /></button>
-                                        <button className="btn btn-error btn-sm text-white" onClick={() => { deleteTask(val.id) }}><MdDelete size={18} /></button>
-                                    </div>
+                                    {
+                                        val.status != 'closed' &&
+                                        <div className='flex gap-1 items-center'>
+                                            <button className="btn btn-primary btn-sm text-white tooltip" data-tip={val.status == 'open' ? "start" : "comment"} onClick={() => { onClickEdit(val) }}> {val.status == 'open' ? <VscDebugStart size={18} /> : <FaComment />}</button>
+                                            {
+                                                val.status == 'inProgress' && <button className="btn btn-success btn-sm text-white tooltip" data-tip="complete" onClick={() => { completeTask(val.id) }}><MdDone size={20} /></button>
+
+                                            }
+                                        </div>
+
+                                    }
+
+
+
+
+
                                 </th>
                             </tr>
                         ))}
                     </tbody>
                 </table>
             </div>
-            <TaskAddEditModal selectedData={selectedData} fetchData={fetchData} modTitle={modTitle} emptySelectedData={emptySelectedData} />
+            <TaskUserUptModal selectedData={selectedData} fetchData={fetchData} emptySelectedData={emptySelectedData} />
         </>
     );
 

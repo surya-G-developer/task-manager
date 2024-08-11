@@ -10,12 +10,12 @@ export const authOptions = {
   },
   providers: [
     CredentialsProvider({
-      name: 'Sign in',
+      name: 'Credential',
       credentials: {
         email: {
           label: 'Email',
           type: 'email',
-          placeholder: 'hello@example.com'
+          placeholder: 'admin@example.com'
         },
         password: { label: 'Password', type: 'password' }
       },
@@ -32,30 +32,16 @@ export const authOptions = {
             ]
           }
         });
-        console.log(user)
-
-        // const user = await prisma.user.findUnique({
-        //   where: {
-        //     email: credentials.email
-        //   }
-        // })
-
         if (!user) {
           return null
         }
-
-
-        // if (!isPasswordValid) {
-        //   return null
-        // }
-
         return user
       }
     })
   ],
   callbacks: {
     session: ({ session, token }) => {
-      console.log('Session Callback', { session, token })
+     // console.log('Session Callback', { session, token })
       return {
         ...session,
         user: {
@@ -66,15 +52,12 @@ export const authOptions = {
       }
     },
     jwt: ({ token, user }) => {
-      console.log('JWT Callback', { token, user })
-      console.log('JWT Callback', { token, user })
       if (user) {
         token.role = user.role; 
         const u = user 
         return {
           ...token,
-          id: u.id,
-          randomKey: u.randomKey
+          id: u.id
         }
       }
       return token
