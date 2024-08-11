@@ -37,13 +37,14 @@ export default function TaskUserUptModal({ selectedData = {}, fetchData, emptySe
             comments: tskCmt,
             id: selectedData.id ? selectedData.id : null
         }
+        closeStateClear();
         const resp = await apiRequest('api/users/task', 'POST', body);
         if (resp.status == 'success') {
             toast.success(resp.data.msg, {
                 hideProgressBar: false,
                 closeOnClick: true,
             });
-            closeStateClear();
+           
             fetchData()
             router.refresh();
         }

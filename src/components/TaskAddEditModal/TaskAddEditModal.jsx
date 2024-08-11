@@ -44,13 +44,13 @@ export default function TaskAddEditModal({ selectedData = {}, fetchData, modTitl
       assign: selectedOption,
       id: selectedData.id ? selectedData.id : null
     }
+    closeStateClear();
     const resp = await apiRequest('api/task', 'POST', body);
     if (resp.status == 'success') {
       toast.success(resp.data.msg, {
         hideProgressBar: false,
         closeOnClick: true,
       });
-      closeStateClear();
       fetchData()
       router.refresh();
     }

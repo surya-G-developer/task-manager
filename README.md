@@ -2,7 +2,7 @@
 <div align="center"><strong>Next.js 14 Task Manager App</strong></div>
 <br />
 <div align="center">
-<a href="https://task-manager-khaki-two.vercel.app/">View Demo</a>
+<a href="https://task-manager-2024.vercel.app/">View Demo</a>
 <span>
 </div>
 
