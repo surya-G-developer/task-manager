@@ -18,26 +18,15 @@ export default function Home() {
   })
 
   if (status === "loading") {
-    return <Loading size="12" color="red-500" message="Loading data..." />;
+    return <Loading  message="Loading data..." />;
   }
 
   
-  const onClickTrigger = () =>{
-    document.getElementById('my_modal_5').showModal()
-  }
-  const handleClick = () => {
-    // You can also make client-side API calls or perform other client-side actions here
-};
   
+
   return (
   <main className="flex-grow p-5">
-    <Title
-     title="Task List"
-     buttonText="Add Task"
-     onClick={onClickTrigger}
-    />
     <TaskListAdmin/>
-    <TaskAddEditModal/>
   </main>  
   );
 }

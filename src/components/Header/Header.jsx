@@ -16,12 +16,13 @@ export default function Header() {
    
     <div className="dropdown dropdown-end">
       <div tabIndex={0} role="button" className="btn btn-ghost btn-circle avatar">
-        <div className="w-10 rounded-full">
-          <img
-            alt="Tailwind CSS Navbar component"
-            src="https://img.daisyui.com/images/stock/photo-1534528741775-53994a69daeb.webp" />
-        </div>
+        <div className="avatar placeholder">
+          <div className="bg-primary text-neutral-content w-8 rounded-full">
+            <span>{data && data.user && data.user.name.charAt(0)}</span>
+          </div>
       </div>
+      </div>
+      
       <div
         tabIndex={0}
         className="card card-compact dropdown-content bg-base-100 z-[1] mt-3 w-52 shadow">

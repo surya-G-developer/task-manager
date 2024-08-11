@@ -1,21 +1,64 @@
 'use client';
 import React from 'react'
-import { useState } from "react";
+import { useState, useEffect } from 'react';
+import { FaPlus } from "react-icons/fa";
+import { apiRequest } from '@/utils/request';
+import { useRouter } from 'next/navigation';
+import { toast } from 'react-toastify';
 
-export default function TaskAddEditModal() {
-    const [tskTitle, setTskTitle] = useState("");
-  const [tskDeskp, setTskDeskp] = useState("");
-  const [tskAssignFor, setTskAssignFor] = useState("");
-  const [selectedOption, setSelectedOption] = useState('');
+export default function TaskAddEditModal( {selectedData = {}}) {
+    const [tskTitle, setTskTitle] = useState(
+        Object.entries(selectedData).length !== 0 ? selectedData.title || '' : ''
+      );
+      const [tskDeskp, setTskDeskp] = useState(
+        Object.entries(selectedData).length !== 0 ? selectedData.desc || '' : ''
+      );
+      const [selectedOption, setSelectedOption] = useState(
+        Object.entries(selectedData).length !== 0
+          ? `${selectedData.assign_to || ''}_${selectedData.assign_name || ''}`
+          : ''
+      );
+  const [userList, setUserList] = useState([]);
+  const router = useRouter();
+  console.log("selectedData", selectedData)
+  console.log("tskTitle", tskTitle)
 
   const handleChange = (event) => {
       setSelectedOption(event.target.value);
   };
 
-  const handleSubmit = (event) => {
+  const handleSubmit = async (event) => {
       event.preventDefault();
-      console.log('Selected Value:', selectedOption);
+      alert("handlesubmit called")
+      let body ={
+        title : tskTitle,
+        desc: tskDeskp,
+        assign :  selectedOption,
+      }
+      const resp = await apiRequest('api/task', 'POST', body);
+        console.log(resp.status, 'resp.data.status')
+            if (resp.status == 'success') {
+                toast.success(resp.data.msg, {
+                    hideProgressBar: false,
+                    closeOnClick: true,
+                  });
+                  document.getElementById('my_modal_5').close();
+                  router.refresh();
+            } 
+      
   };
+
+  useEffect(() => {
+    const fetchUserList = async () => {
+        const resp = await apiRequest('api/users', 'GET');
+        console.log(resp.status, 'resp.data.status')
+        if (resp.status == 'success') {
+            console.log(resp, 'inside success')
+            setUserList(resp.data.data)
+        }
+    };
+    fetchUserList();
+}, []);
   return (
     <>
         {/* Open the modal using document.getElementById('ID').showModal() method */}
@@ -63,9 +106,11 @@ export default function TaskAddEditModal() {
   </div>
   <select  className="select select-accent w-full max-w-xs" value={selectedOption} onChange={handleChange}>
                     <option value="">Select an option</option>
-                    <option value="option1">Option 1</option>
-                    <option value="option2">Option 2</option>
-                    <option value="option3">Option 3</option>
+                    {userList && userList.length > 0 && userList.map((val, ind) =>{
+                        const spltData = val.split('_');
+                        return(<option key={ind} value={val}>{spltData[1]}</option>)
+                    })
+                    }
            </select>
 </label>
 

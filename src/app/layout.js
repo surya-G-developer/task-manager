@@ -3,6 +3,9 @@ import "./globals.css";
 import Header from "@/components/Header/Header";
 import Footer from "@/components/Footer/Footer";
 import Providers from "./Providers";
+import { ToastContainer, toast, Slide } from 'react-toastify';
+
+import 'react-toastify/dist/ReactToastify.css';
 
 
 const inter = Inter({ subsets: ["latin"] });
@@ -19,6 +22,7 @@ export default function RootLayout({ children }) {
         <div className="flex flex-col min-h-screen">
         <Providers>
           <Header/>
+          <ToastContainer transition={Slide} newestOnTop />
           {children}
           <Footer/>
         </Providers>
