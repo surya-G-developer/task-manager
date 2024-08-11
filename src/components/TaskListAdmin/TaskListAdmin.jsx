@@ -64,7 +64,7 @@ export default function TaskListAdmin() {
     return (
         <>
             <Title
-                title="Task List"
+                title="Tasks List"
                 buttonText="Add Task"
                 onClick={onClickTrigger}
             />
